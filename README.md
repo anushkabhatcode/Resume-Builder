@@ -8,7 +8,7 @@
 
 ## Features:
 
-#### Resume Upload
-#### Job Description Analysis and comparison
-#### Generate enhanced resume
-#### Download generated resume
+#### 1. Resume Upload
+#### 2. Job Description Analysis and comparison
+#### 3. Generate enhanced resume
+#### 4. Download generated resume
