@@ -6,3 +6,9 @@
 ## github link:
 #### https://github.com/anushkabhatcode/Resume-Builder.git
 
+## Features:
+
+#### Resume Upload
+#### Job Description Analysis and comparison
+#### Generate enhanced resume
+#### Download generated resume
