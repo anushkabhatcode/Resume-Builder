@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-// import '../styles/landing-page-styles.css';
-import logo from '../assets/images/logo.jpeg';
-import templateImage from '../assets/images/template_image.jpg';
+import '../styles/landing-page-styles.css';
+import templateImage from '../assets/images/template_image.png';
 import { Slide, Zoom } from "react-awesome-reveal";
 
 export function LandingPage() {
@@ -14,7 +13,7 @@ export function LandingPage() {
   return (
     <>
       <nav className="navbar navbar-expand-lg">
-         <div className="container"> <Link className="navbar-brand navbar-logo" to="#"> {/*<img src={logo} alt="logo" className="logo-1" />*/} </Link> 
+         <div className="container"> <Link className="navbar-brand navbar-logo" to="#"> {/* <img src={logo} alt="logo" className="logo-1" /> */}</Link> 
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span
               className="fas fa-bars"></span> </button>
@@ -34,17 +33,18 @@ export function LandingPage() {
                   <h2 className="white">Enhance your Resume in Seconds</h2>
                   <p className="banner-text white">Enhancing Professional Resumes for Your Success: Elevate your career with our user-friendly platform, showcasing your accomplishments and skills effortlessly. Your gateway to professional growth awaits!</p>
                   <ul>
-                    <li><Slide direction="up" triggerOnce={true}><Link to="/signup" className="banner-button"><span className="fadeInUp" />Get Started</Link></Slide></li>
+                    <li><Slide direction="up" triggerOnce={true}><Link to="/getstarted" className="banner-button"><span className="fadeInUp" />Get Started</Link></Slide></li>
                   </ul>
                 </div>
               </div>
+              <div className="col-md-5 col-sm-12"><Slide direction="up" triggerOnce={true}> <img src={templateImage} className="img-fluid fadeInUp enlarged-image" alt="Portfolio Template Image" style={{ width: '100%', maxWidth: '1000px', height: 'auto' }} /></Slide> </div>
             </div>
           </div>
         </div>
       </section>
 
       <section id="About" className="about section-padding prelative" data-scroll-index='1'>
-        <div className="container">
+        <div className="container" >
           <div className="row">
             <div className="col-md-12">
               <div className="sectioner-header text-center">
@@ -91,7 +91,7 @@ export function LandingPage() {
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-12">
-              <p>2024 &copy; Resume Builder</p>
+              <p>2024 &copy; Resume Magic</p>
             </div>
           </div>
         </div>
