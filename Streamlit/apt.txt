@@ -1,0 +1,5 @@
+poppler-utils=0.90.0
+poppler
+unoconv 
+libreoffice
+pandoc
