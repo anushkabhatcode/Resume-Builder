@@ -1,48 +1,61 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
-from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['ALLOWED_EXTENSIONS'] = {'pdf', 'doc', 'docx'}
-app.secret_key = 'your_secret_key_here'
+CORS(app)
 
-# Ensure upload folder exists
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Check if uploaded file is allowed
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+# Function to handle the resume upload
+def save_resume_file(resume):
 
-# Home page
-@app.route('/')
-def index():
-    return render_template('index.html')
+    try:
+        # Check if the resume file exists
+        if resume.filename == '':
+            return '', 400  # If no file is selected, return 400 Bad Request
 
-# Route for file upload
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        flash('No file part')
-        return redirect(url_for('index'))
-    file = request.files['file']
-    if file.filename == '':
-        flash('No selected file')
-        return redirect(url_for('index'))
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
-        flash('File successfully uploaded')
-        return redirect(url_for('uploaded_file', filename=filename))
-    else:
-        flash('Allowed file types are pdf, doc, docx')
-        return redirect(url_for('index'))
+        # Save the file to the uploads folder
+        if resume:
+            # create a temp folder for storing the resume
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+            filename = os.path.join(app.config['UPLOAD_FOLDER'], resume.filename)
+            resume.save(filename)
+            print(f"Received resume: {resume.filename}")
+            return '', 200  # Return HTTP 200 with no body
+    except Exception as e:
+        print(f"Error: {e}")
+        return '', 500  # Return HTTP 500 if there is any error
 
-# Route to serve uploaded file for download
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+# Endpoint to handle the resume file received in a POST request
+@app.route('/api/uploadresume', methods=['POST'])
+def handle_resume():
+    # Check if the request contains a file
+    if 'resume' not in request.files:
+        return '', 400  # If no file is found, return 400 Bad Request
+
+    resume = request.files['resume']
+    # Call the separate function to handle the file saving logic
+    return save_resume_file(resume)
+
+
+# Endpoint to handle the job description received in a POST request
+@app.route('/api/submitjd', methods=['POST'])
+def handle_job_description():
+    try:
+        # Retrieve the job description from the request
+        data = request.json
+        job_description = data.get("jobDescription")
+
+        # Print the job description to the console
+        if job_description:
+            print("Received Job Description:", job_description)
+            return jsonify({"message": "Job description received successfully"}), 200
+        else:
+            return jsonify({"error": "Job description not provided"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
