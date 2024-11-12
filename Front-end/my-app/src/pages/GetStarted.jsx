@@ -7,33 +7,55 @@ export function GetStarted() {
   const [resumeScore, setResumeScore] = useState(null);
   const [showMessage, setShowMessage] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
-  const [isJDSubmitted, setIsJDSubmitted] = useState(false);
+  const [JDFile, setJDFile] = useState(null);
 
   const base_url = "http://127.0.0.1:5000/api"
 
-  const handleJDSubmit = async () => {
-    if (jobDescriptionText.trim() !== '') {
-      try {
-        const response = await fetch(`${base_url}/submitjd`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ jobDescription: jobDescriptionText })
-        });    
-        if (response.ok) {
-          setIsJDSubmitted(true);
-          console.log("JD submitted successfully");
-          setShowMessage(false);
-          setResumeScore(null);
-        } else {
-          console.error("Failed to submit job description");
-        }
-      } catch (error) {
-        console.error("Error:", error);
+  // const handleJDSubmit = async () => {
+  //   if (jobDescriptionText.trim() !== '') {
+  //     try {
+  //       const response = await fetch(`${base_url}/submitjd`, {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //         },
+  //         body: JSON.stringify({ jobDescription: jobDescriptionText })
+  //       });    
+  //       if (response.ok) {
+  //         setIsJDSubmitted(true);
+  //         console.log("JD submitted successfully");
+  //         setShowMessage(false);
+  //         setResumeScore(null);
+  //       } else {
+  //         console.error("Failed to submit job description");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error:", error);
+  //     }
+  //   } else {
+  //     alert("Please enter a job description.");
+  //   }
+  // };
+
+  const handleJDSubmit = async (event) => {
+    const file = event.target.files[0];
+    setJDFile(file);
+
+    const formData = new FormData();
+    formData.append("JD", file);
+
+    try {
+      const response = await fetch(`${base_url}/submitjd`, {
+        method: 'POST',
+        body: formData
+      });
+      if (response.ok) {
+        console.log("JD uploaded successfully");
+      } else {
+        console.error("Failed to upload JD");
       }
-    } else {
-      alert("Please enter a job description.");
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
 
@@ -90,25 +112,28 @@ export function GetStarted() {
 
       <section className="get-started-banner">
         <div className="content">
-          <div className="description-label">
+          {/* <div className="description-label">
             <label>Job Description Text</label>
-          </div>
-          <textarea
+          </div> */}
+          {/* <textarea
             placeholder="Paste job description text here..."
             value={jobDescriptionText}
             onChange={(e) => setJobDescriptionText(e.target.value)}
             maxLength={5500}
-          />
+          />  
           <div className="buttons-row">
             <button onClick={handleJDSubmit}>Submit JD</button>
-          </div>
+          </div> */}
+          <p>Upload your JD (PDF)</p>
+          <div className="buttons-row">
+            <input type="file" accept=".pdf" onChange={handleJDSubmit} />
+          </div> 
           <p>Upload your resume (PDF)</p>
           <div className="buttons-row">
             <input type="file" accept=".pdf" onChange={handleFileUpload} />
           </div>
-
           {/* Buttons only show up when JD is submitted and resume is uploaded */}
-          {isJDSubmitted && resumeFile && (
+          {JDFile && resumeFile && (
             <Slide direction="up" triggerOnce={true}>
               <div className="buttons-row">
                 <button onClick={handleGetResumeScoreClick}>Get Resume Score</button>
