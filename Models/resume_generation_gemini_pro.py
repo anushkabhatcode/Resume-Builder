@@ -31,6 +31,7 @@ Original file is located at
 
 import docx2txt
 import PyPDF2
+import subprocess
 def extract_text(file_path):
     if file_path.endswith(".docx"):
         # Extract text from DOCX file
@@ -52,10 +53,10 @@ def extract_text(file_path):
 # auth.authenticate_user()
 
 import os
-GOOGLE_APPLICATION_CREDENTIALS = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
-private_key_id = os.environ.get('PRIVATE_KEY_ID')
-private_key = os.environ.get('PRIVATE_KEY')
-client_id = os.environ.get('CLIENT_ID')
+# GOOGLE_APPLICATION_CREDENTIALS = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+# private_key_id = os.environ.get('PRIVATE_KEY_ID')
+# private_key = os.environ.get('PRIVATE_KEY')
+# client_id = os.environ.get('CLIENT_ID')
 
 # !pip install python-docx
 
@@ -81,6 +82,10 @@ def save_resume_to_docx(tailored_resume, file_path):
     doc.add_heading('Tailored Resume', level=1)
     doc.add_paragraph(tailored_resume)
     doc.save(file_path)
+
+def save_resume_to_pdf(docx_file_path, file_path):
+    subprocess.run(['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', file_path, docx_file_path])
+
 
 # Function to read text from a .docx file
 def read_docx(file_path):
@@ -144,9 +149,8 @@ Please generate a resume that:
         return "Failed to generate resume text."
 
 #Entry function for the model
-def generate_gemini(current_resume,job_description):
+def generate_gemini(current_resume,job_description , download_path , doctype):
     st.header('Resume Tailoring')
-
     # Load the resume and job description from Google Drive
     resume_text = extract_text(current_resume)
     job_description = extract_text(job_description)
@@ -159,8 +163,15 @@ def generate_gemini(current_resume,job_description):
 
         # Save the tailored resume to a .docx file
     if tailored_resume:
-        file_path = f"Tailored_Resume_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+        time = datetime.now().strftime('%Y%m%d_%H%M%S')
+        file_name = f"Tailored_Resume_{time}.docx"
+        file_path = os.path.join(download_path , file_name)
         save_resume_to_docx(tailored_resume, file_path)
+        if(doctype == 'pdf'):
+            file_name = f"Tailored_Resume_{time}.pdf"
+            save_resume_to_pdf(file_path, download_path)
+            file_path = os.path.join(download_path , file_name)
+
         st.success(f"Download tailored resume")
         # st.success(f"Tailored resume saved to {file_path}")        
 
