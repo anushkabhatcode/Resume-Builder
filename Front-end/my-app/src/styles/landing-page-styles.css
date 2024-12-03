@@ -313,15 +313,16 @@
     cursor: pointer;
 }
 
-.footer-copy {
+.landing-page-footer-copy {
     background: #ffffff;
     color: #242424;
     font-size: 13px;
     text-align: center;
+    border-top: 1px solid #ccc;
     padding: 15px 0px;
 }
 
-.footer-copy p {
+.landing-page-footer-copy p {
     margin-bottom: 0px;
 }
 
@@ -427,7 +428,7 @@
         margin-top: 40px;
     }
 
-    .footer-copy p {
+    .landing-page-footer-copy p {
         font-size: 10px;
         color: #ffffff;
     }
