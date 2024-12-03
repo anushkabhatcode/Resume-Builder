@@ -16,7 +16,7 @@ app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
 
 ssl._create_default_https_context = ssl._create_unverified_context
-sys.path.append(os.path.join(os.path.dirname(__file__), '../Models'))
+sys.path.append(os.path.join(os.path.dirname(__file__), './Models'))
 from similarity_score_refined import *
 from resume_generation_gemini_pro import *
 
