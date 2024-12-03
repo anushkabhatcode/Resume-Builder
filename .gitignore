@@ -1,1 +1,15 @@
 .DS_Store
+venv/
+env/
+
+*.env
+.env.*
+
+downloads/
+uploads/
+package-lock.json
+
+__pycache__/
+*.py[cod]
+*.pyo
+
