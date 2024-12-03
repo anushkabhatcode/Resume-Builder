@@ -87,7 +87,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <footer className="footer-copy">
+      <footer className="landing-page-footer-copy">
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-12">
@@ -96,7 +96,6 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
-
     </>
   );
 }
