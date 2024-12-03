@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os, sys
 import ssl
@@ -10,9 +10,15 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+
+DOWNLOAD_FOLDER = 'downloads'
+app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
+os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
+
 ssl._create_default_https_context = ssl._create_unverified_context
 sys.path.append(os.path.join(os.path.dirname(__file__), '../Models'))
 from similarity_score_refined import *
+from resume_generation_gemini_pro import *
 
 
 
@@ -87,6 +93,14 @@ def handle_similarity_score():
     JD_file_path = app.config['JD_PATH']
     score = similarity_main(resume_file_path,JD_file_path)
     return jsonify({"score" : score}) , 200
+
+@app.route('/api/downloadresume/<filetype>' , methods=['POST'])
+def download_resume(filetype):
+    resume_file_path = app.config['RESUME_PATH']
+    JD_file_path = app.config['JD_PATH']
+    download_path = app.config['DOWNLOAD_FOLDER']
+    resume , file_path = generate_gemini(resume_file_path, JD_file_path , download_path , filetype)
+    return send_file(file_path)
     
 
 
