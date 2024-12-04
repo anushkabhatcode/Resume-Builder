@@ -60,8 +60,7 @@ import os
 
 # !pip install python-docx
 
-import os
-import streamlit as st
+# import streamlit as st
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores.faiss import FAISS
 # from google.colab import drive
@@ -69,11 +68,11 @@ from docx import Document
 import google.generativeai as genai
 from datetime import datetime
 
+from dotenv import load_dotenv
+load_dotenv()
+
 api_key_google = os.environ.get('GOOGLE_GEMINI_KEY')
 genai.configure(api_key=api_key_google)
-
-# Mount Google Drive
-# drive.mount('/content/drive')
 
 model = genai.GenerativeModel('gemini-pro')
 
@@ -150,15 +149,15 @@ Please generate a resume that:
 
 #Entry function for the model
 def generate_gemini(current_resume,job_description , download_path , doctype):
-    st.header('Resume Tailoring')
+    # st.header('Resume Tailoring')
     # Load the resume and job description from Google Drive
     resume_text = extract_text(current_resume)
     job_description = extract_text(job_description)
 
     # Tailor resume based on job description
     tailored_resume = tailor_resume(resume_text, job_description)
-    st.write("**Tailored Resume:**")
-    st.write(tailored_resume)
+    # st.write("**Tailored Resume:**")
+    # st.write(tailored_resume)
     print(tailored_resume)
 
         # Save the tailored resume to a .docx file
@@ -172,7 +171,7 @@ def generate_gemini(current_resume,job_description , download_path , doctype):
             save_resume_to_pdf(file_path, download_path)
             file_path = os.path.join(download_path , file_name)
 
-        st.success(f"Download tailored resume")
+        # st.success(f"Download tailored resume")
         # st.success(f"Tailored resume saved to {file_path}")        
 
     return tailored_resume, file_path

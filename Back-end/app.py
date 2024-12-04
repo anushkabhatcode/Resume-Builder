@@ -16,7 +16,7 @@ app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
 
 ssl._create_default_https_context = ssl._create_unverified_context
-sys.path.append(os.path.join(os.path.dirname(__file__), './Models'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'Models'))
 from similarity_score_refined import *
 from resume_generation_gemini_pro import *
 
@@ -103,6 +103,29 @@ def download_resume(filetype):
     return send_file(file_path)
     
 
+# PK: Tailor resume and send as markdown to frontend
+"""
+Method to tailor the resume based on the job description and resume uploaded
+returns json data
+"""
+@app.route('/api/tailorresume', methods=['POST'])
+def tailor_resume_endpoint():
+    try:
+        # Get resume and job description paths
+        resume_file_path = app.config['RESUME_PATH']
+        jd_file_path = app.config['JD_PATH']
+
+        # Generate the tailored resume using gemini_pro
+        download_path = app.config['DOWNLOAD_FOLDER']
+        tailored_resume, filepath = generate_gemini(resume_file_path, jd_file_path, download_path, "markdown")
+
+        if tailored_resume:
+            jsonify({"resume": tailored_resume, "filepath": filepath}), 200
+        else:
+            return jsonify({"error": "Failed to generate resume"}), 500
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

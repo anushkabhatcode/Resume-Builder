@@ -19,7 +19,11 @@ import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from sentence_transformers import SentenceTransformer, util
 import os
+from dotenv import load_dotenv
+import openai
+load_dotenv()
 
 # Ensure you have downloaded stopwords and wordnet
 import nltk
@@ -78,7 +82,7 @@ def calculate_tfidf(doc):
     return ' '.join(important_terms)
 
 def call_chatgpt_api(prompt, api_key,model="gpt-3.5-turbo"):
-    import openai
+    
     openai.api_key = api_key
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -95,7 +99,7 @@ def call_chatgpt_api(prompt, api_key,model="gpt-3.5-turbo"):
     return response['choices'][0]['message']['content'].strip()
 
 def calculate_similarity(resume, job_desc, model_name="sentence-transformers/all-MiniLM-L6-v2"):
-    from sentence_transformers import SentenceTransformer, util
+    
     model = SentenceTransformer(model_name)
 
     # Convert texts to embeddings
