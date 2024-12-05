@@ -20,6 +20,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Models'))
 from similarity_score_refined import *
 from resume_generation_gemini_pro import *
+from resume_similarity_score import *
 
 
 
@@ -92,7 +93,8 @@ def handle_similarity_score():
 
     resume_file_path = app.config['RESUME_PATH']
     JD_file_path = app.config['JD_PATH']
-    score = similarity_main(resume_file_path,JD_file_path)
+    # score = similarity_main(resume_file_path,JD_file_path)
+    score = process_files(JD_file_path, resume_file_path)
     return jsonify({"score" : score}) , 200
 
 # @app.route('/api/downloadresume/<filetype>' , methods=['POST'])
