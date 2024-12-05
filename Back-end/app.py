@@ -154,6 +154,15 @@ def download_file(filename):
         print(f"Error: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
+# Function to get score of tailored resume against JD
+@app.route('/api/get_new_score', methods=['GET'])
+def handle_new_similarity_score():
+    resume_file_path = app.config['DOWNLOAD_FOLDER']
+    JD_file_path = app.config['JD_PATH']
+    # score = similarity_main(resume_file_path,JD_file_path)
+    score = process_files(JD_file_path, resume_file_path)
+    return jsonify({"score" : score}) , 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)
