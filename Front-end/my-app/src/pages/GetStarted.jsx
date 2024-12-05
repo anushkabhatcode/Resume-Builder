@@ -16,8 +16,8 @@ export function GetStarted() {
 
   const [markdownContent, setMarkdownContent] = useState("");
 
-  // const base_url = "http://127.0.0.1:5000/api";
-  const base_url = "https://resume-builder-api-iuk0.onrender.com/api";
+  const base_url = "http://127.0.0.1:5000/api";
+  // const base_url = "https://resume-builder-api-iuk0.onrender.com/api";
 
   const handleJDSubmit = async (event) => {
     const file = event.target.files[0];
@@ -224,11 +224,11 @@ export function GetStarted() {
 
       <section className="get-started-banner">
         <div className="content">
-          <p>Upload your JD (PDF)</p>
+          <span>Upload your JD (PDF)</span>
           <div className="buttons-row">
             <input type="file" accept=".pdf" onChange={handleJDSubmit} />
           </div>
-          <p>Upload your resume (PDF)</p>
+          <span>Upload your resume (PDF)</span>
           <div className="buttons-row">
             <input type="file" accept=".pdf" onChange={handleFileUpload} />
           </div>
