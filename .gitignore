@@ -15,6 +15,6 @@ __pycache__/
 *.pyo
 
 Front-end/my-app/package-lock.json
-Front-end/my-app/config-overrides.js
+
 Front-end/my-app/package-lock.json
 
