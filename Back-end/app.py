@@ -6,14 +6,14 @@ from flask import send_from_directory
 
 app = Flask(__name__)
 # CORS(app)
-# CORS(app, resources={r"/*": {"origins": "*"} })
-CORS(app, resources={r"/*": {
-    "origins": 
-    [
-    "http://localhost:3000", 
-    "https://resume-builder-5mbc.onrender.com/"
-    ]
-    }})
+CORS(app, resources={r"/*": {"origins": ["*"]} })
+# CORS(app, resources={r"/*": {
+#     "origins": 
+#     [
+#     "http://localhost:3000", 
+#     "https://resume-builder-5mbc.onrender.com/"
+#     ]
+#     }})
                              
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
