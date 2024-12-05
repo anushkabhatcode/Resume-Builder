@@ -16,8 +16,8 @@ export function GetStarted() {
 
   const [markdownContent, setMarkdownContent] = useState("");
 
-  const base_url = "http://127.0.0.1:5000/api";
-  // const base_url = "https://resume-builder-api-iuk0.onrender.com/api";
+  // const base_url = "http://127.0.0.1:5000/api";
+  const base_url = "https://resume-builder-api-iuk0.onrender.com/api";
 
   const handleJDSubmit = async (event) => {
     const file = event.target.files[0];
