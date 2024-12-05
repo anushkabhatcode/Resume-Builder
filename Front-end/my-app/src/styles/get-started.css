@@ -172,7 +172,7 @@ input[type="file"] {
 @media (max-width: 80%) {
   .get-started-banner {
     padding: 15px;
-    max-width: 100%; /* Use full width for smaller devices */
+    max-width: 100%; 
   }
 
   .resume-preview {
@@ -185,6 +185,7 @@ input[type="file"] {
     gap: 10px;
   }
 }
+
 
 .resume-preview {
   border: 1px solid #ccc;
@@ -205,25 +206,13 @@ input[type="file"] {
 
 }
 
-/* .resume-preview .contact-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  color: #555;
-  border-bottom: 1px solid #ccc; 
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  text-align: justify;
-} */
-
 .resume-preview ul {
   list-style: none;        
   padding-left: 0;         
   margin: 10px 0;         
 }
 
-/* Add custom bullets for unordered lists */
+
 .resume-preview ul li::before {
   content: '• ';           
   color: #555;             
@@ -231,7 +220,7 @@ input[type="file"] {
   margin-right: 8px;       
 }
 
-/* Bold section headers */
+
 .resume-preview h1, .resume-preview h2, .resume-preview h3 {
   color: #333;             
   font-weight: bold;       
@@ -242,8 +231,8 @@ input[type="file"] {
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%; /* Ensure the height covers the full viewport */
-  background: #646464; /* Default background color */
+  height: 100%; 
+  background: #646464; 
 }
 
 

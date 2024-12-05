@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os, sys
 import ssl
+from flask import send_from_directory
 
 app = Flask(__name__)
 CORS(app)
@@ -94,14 +95,15 @@ def handle_similarity_score():
     score = similarity_main(resume_file_path,JD_file_path)
     return jsonify({"score" : score}) , 200
 
-@app.route('/api/downloadresume/<filetype>' , methods=['POST'])
-def download_resume(filetype):
-    resume_file_path = app.config['RESUME_PATH']
-    JD_file_path = app.config['JD_PATH']
-    download_path = app.config['DOWNLOAD_FOLDER']
-    resume , file_path = generate_gemini(resume_file_path, JD_file_path , download_path , filetype)
-    return send_file(file_path)
+# @app.route('/api/downloadresume/<filetype>' , methods=['POST'])
+# def download_resume(filetype):
+#     resume_file_path = app.config['RESUME_PATH']
+#     JD_file_path = app.config['JD_PATH']
+#     download_path = app.config['DOWNLOAD_FOLDER']
+#     resume , file_path = generate_gemini(resume_file_path, JD_file_path , download_path , filetype)
+#     return send_file(file_path)
     
+
 
 # PK: Tailor resume and send as markdown to frontend
 """
@@ -119,13 +121,37 @@ def tailor_resume_endpoint():
         download_path = app.config['DOWNLOAD_FOLDER']
         tailored_resume, filepath = generate_gemini(resume_file_path, jd_file_path, download_path, "markdown")
 
+        # filename = os.path.basename(filepath)
+        print(f"Generated file path: {filepath}")
+        filename = os.path.basename(filepath)
+
         if tailored_resume:
-            jsonify({"resume": tailored_resume, "filepath": filepath}), 200
+            return jsonify({"resume": tailored_resume, "filepath": filename}), 200
         else:
             return jsonify({"error": "Failed to generate resume"}), 500
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": "Internal server error"}), 500
+    
+@app.route('/api/downloads/<filename>', methods=['GET'])
+def download_file(filename):
+    try:
+        file_path = os.path.join(app.config['DOWNLOAD_FOLDER'], filename)
+        print(f"Requested file path: {file_path}")
+        if not os.path.exists(file_path):
+            print("File does not exist.")
+            return jsonify({"error": "File not found"}), 404
+
+        print("File found. Returning file.")
+        return send_file(
+            file_path,
+            as_attachment=True,
+            mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

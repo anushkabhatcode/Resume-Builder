@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/get-started.css';
 import { Slide } from "react-awesome-reveal";
 import { ResumePreview } from '../components/ResumePreview';
-import htmlToDocx from "html-to-docx";
-import { jsPDF } from "jspdf";
-import htmlToPdfMake from "html-to-pdfmake";
 
 export function GetStarted() {
   const [resumeScore, setResumeScore] = useState(null);
@@ -16,7 +13,6 @@ export function GetStarted() {
   const [pdfBlob, setPdfBlob] = useState(null);
   const [showPreviewButtons, setShowPreviewButtons] = useState(false);
   const [isTailoring, setIsTailoring] = useState(false);
-  const [tailoredFilePath, setTailoredFilePath] = useState();
 
   const [markdownContent, setMarkdownContent] = useState("");
 
@@ -93,9 +89,10 @@ export function GetStarted() {
       setLoading(false);
     }
   };
-
-  const handleTailorResumeClick = async () => {
-    setIsTailoring(true); // Show tailoring message
+  
+  
+  const handleGetResumePath1 = async () => {
+    setIsTailoring(true);
     try {
       const response = await fetch(`${base_url}/tailorresume`, {
         method: "POST",
@@ -103,203 +100,119 @@ export function GetStarted() {
           "Content-Type": "application/json",
         },
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setMarkdownContent(data.resume);
-        console.log(data.filepath);
-        // setTailoredFilePath(data.filepath);
-        setShowPreviewButtons(true); // Enable download buttons
-      } else {
-        console.error("Failed to fetch tailored resume");
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      // setLoading(false);
-      setIsTailoring(false);
-    }
-  };
-
-  // const handleDownload = async (format) => {
-  //   if (!markdownContent) {
-  //     console.error("No content to download.");
-  //     return;
-  //   }
   
-  //   if (format === "word") {
-  //     // Convert Markdown to HTML for Word
-  //     const contentHtml = `<div>${markdownContent}</div>`;
-  //     const blob = await htmlToDocx(contentHtml, null, {
-  //       margins: { top: 720, right: 720, bottom: 720, left: 720 },
-  //     });
-  
-  //     const link = document.createElement("a");
-  //     link.href = URL.createObjectURL(blob);
-  //     link.download = "Tailored_Resume.docx";
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //   } else if (format === "pdf") {
-  //     // Convert Markdown to HTML for PDF
-  //     const doc = new jsPDF();
-  //     const contentHtml = `<div>${markdownContent}</div>`;
-  //     const pdfContent = htmlToPdfMake(contentHtml);
-  
-  //     // Add content to the PDF
-  //     doc.html(contentHtml, {
-  //       callback: (doc) => {
-  //         doc.save("Tailored_Resume.pdf");
-  //       },
-  //     });
-  //   }
-  // };
-
-  // const handleDownload = async (format) => {
-  //   if (!markdownContent) {
-  //     console.error("No content to download.");
-  //     return;
-  //   }
-  
-  //   if (format === "word") {
-  //     const contentHtml = `<div>${markdownContent}</div>`;
-  //     const blob = await htmlToDocx(contentHtml, null, {
-  //       margins: { top: 720, right: 720, bottom: 720, left: 720 },
-  //     });
-  
-  //     const link = document.createElement("a");
-  //     link.href = URL.createObjectURL(blob);
-  //     link.download = "Tailored_Resume.docx";
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //   } else if (format === "pdf") {
-  //     // generatePDF();
+      const data = await response.json();
       
-  //   }
-  // };
-  const handleDownload = async (format) => {
-    if (!markdownContent) {
-      console.error("No content to download.");
-      return;
-    }
+      // Display tailored resume content as markdown
+      setMarkdownContent(data.resume);
   
-    if (format === "word") {
-      const contentHtml = `<div>${markdownContent}</div>`;
-      const blob = await htmlToDocx(contentHtml, null, {
-        margins: { top: 720, right: 720, bottom: 720, left: 720 },
-      });
+      // Fetch file paths
+      const docxFilePath = `${base_url}/downloads/${data.filepath}`;
+      const pdfFilePath = `${base_url}/downloads/${data.filepath.replace(".docx", ".pdf")}`;
   
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "Tailored_Resume.docx";
-      setDocxBlob(docxBlob);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else if (format === "pdf") {
-      // const pdfBlob = await pdfResponse.blob();
-      setPdfBlob(pdfBlob);
-      
-    }
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF("p", "mm", "a4");
+      console.log("DOCX Download URL:", docxFilePath);
+      console.log("PDF Download URL:", pdfFilePath);
   
-    const contentHtml = `
-      <div style="font-family: Arial, sans-serif; font-size: 12px; line-height: 1.6; text-align: left;">
-        ${markdownContent}
-      </div>
-    `;
-  
-    doc.html(contentHtml, {
-      callback: (doc) => {
-        doc.save("Tailored_Resume.pdf");
-      },
-      x: 10,
-      y: 10,
-      width: 190, 
-    });
-  };
-
-  const handleDownload2 = (format) => {
-    const element = document.createElement("a");
-    let fileContent;
-    let fileName;
-
-    if (format === "word") {
-      fileContent = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${markdownContent}</body></html>`;
-      fileName = "Tailored_Resume.docx";
-    } else if (format === "pdf") {
-      fileContent = markdownContent; 
-      fileName = "Tailored_Resume.pdf";
-    }
-
-    const blob = new Blob([fileContent], {
-      type: format === "word" ? "application/msword" : "application/pdf",
-    });
-
-    const url = URL.createObjectURL(blob);
-    element.href = url;
-    element.setAttribute("download", fileName);
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  };
-
-  const handlePreviewResumeClick = async () => {
-    setIsTailoring(true); // Show tailoring message
-    try {
-      // Fetch DOCX
-      const docxResponse = await fetch(`${base_url}/downloadresume/docx`, {
-        method: 'POST',
-      });
-      if (!docxResponse.ok) throw new Error("Failed to fetch DOCX");
+      // Fetch DOCX Blob
+      const docxResponse = await fetch(docxFilePath);
+      const contentType = docxResponse.headers.get("Content-Type");
+      if (!docxResponse.ok) throw new Error("Failed to fetch DOCX Blob");
+      if (contentType !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+        console.error("Invalid DOCX response");
+        return;
+      }
       const docxBlob = await docxResponse.blob();
       setDocxBlob(docxBlob);
-
-      // Fetch PDF
-      const pdfResponse = await fetch(`${base_url}/downloadresume/pdf`, {
-        method: 'POST',
-      });
-      if (!pdfResponse.ok) throw new Error("Failed to fetch PDF");
-      const pdfBlob = await pdfResponse.blob();
-      setPdfBlob(pdfBlob);
-
-      // Open preview in a new tab
-      const url = window.URL.createObjectURL(pdfBlob); // Using PDF for preview
-      window.open(url, "_blank");
-
-      setShowPreviewButtons(true); // Enable download buttons
+      console.log("DOCX Blob fetched successfully");
+  
+      // Fetch PDF Blob
+      // const pdfResponse = await fetch(pdfFilePath);
+      // if (!pdfResponse.ok) throw new Error("Failed to fetch PDF Blob");
+      // const pdfBlob = await pdfResponse.blob();      
+      // setPdfBlob(pdfBlob);      
+      // console.log("PDF Blob fetched successfully");
+  
+      setShowPreviewButtons(true);
     } catch (error) {
-      console.error("Error while previewing resume:", error);
-    } finally {
+      console.error("Error while fetching resume paths:", error);
+    }finally {
       setIsTailoring(false); // Hide tailoring message
     }
   };
+  
+  
+  // const handlePreviewResumeClick = async () => {
+  //   setIsTailoring(true); // Show tailoring message
+  //   try {
+  //     // Fetch DOCX
+  //     const docxResponse = await fetch(`${base_url}/downloadresume/docx`, {
+  //       method: 'POST',
+  //     });
+  //     if (!docxResponse.ok) throw new Error("Failed to fetch DOCX");
+  //     const docxBlob = await docxResponse.blob();
+  //     setDocxBlob(docxBlob);
+
+  //     // Fetch PDF
+  //     const pdfResponse = await fetch(`${base_url}/downloadresume/pdf`, {
+  //       method: 'POST',
+  //     });
+  //     if (!pdfResponse.ok) throw new Error("Failed to fetch PDF");
+  //     const pdfBlob = await pdfResponse.blob();
+  //     setPdfBlob(pdfBlob);
+
+  //     // Open preview in a new tab
+  //     const url = window.URL.createObjectURL(pdfBlob); // Using PDF for preview
+  //     window.open(url, "_blank");
+
+  //     setShowPreviewButtons(true); // Enable download buttons
+  //   } catch (error) {
+  //     console.error("Error while previewing resume:", error);
+  //   } finally {
+  //     setIsTailoring(false); // Hide tailoring message
+  //   }
+  // };
+
+  useEffect(() => {
+    if (docxBlob && pdfBlob) {
+      console.log("DOCX and PDF blobs have been updated!");
+      console.log("DOCX Blob:", docxBlob);
+      console.log("PDF Blob:", pdfBlob);
+    }
+  }, [docxBlob, pdfBlob]); 
+
 
   const handleDownloadResumePDF = () => {
-    if (!pdfBlob) return;
+    if (!pdfBlob) {
+      console.error("PDF Blob is not available for download.");
+      return;
+    }
     const url = window.URL.createObjectURL(pdfBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.setAttribute('download', 'resume.pdf');
+    link.setAttribute("download", "resume.pdf");
     document.body.appendChild(link);
     link.click();
-    link.parentNode.removeChild(link);
+    // link.parentNode.removeChild(link);
+    document.body.removeChild(link);
   };
-
+  
   const handleDownloadResumeDocx = () => {
     if (!docxBlob) return;
+    
     const url = window.URL.createObjectURL(docxBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.setAttribute('download', 'resume.docx');
+    link.setAttribute("download", "resume.docx");
     document.body.appendChild(link);
     link.click();
-    link.parentNode.removeChild(link);
+    document.body.removeChild(link);
+    //   link.parentNode.removeChild(link);
   };
+
 
   return (
     <div className="get-started-container">
@@ -325,16 +238,14 @@ export function GetStarted() {
               <div className="buttons-row">
                 <button onClick={handleGetResumeScoreClick}>Get Resume Score</button>
                 {/* <button onClick={handlePreviewResumeClick}>Preview Resume</button> */}
-                <button onClick={handleTailorResumeClick}>Preview Resume</button>
+                {/* <button onClick={handleTailorResumeClick}>Preview Resume</button> */}
+                <button onClick={handleGetResumePath1}>Tailor Resume</button>
                 {showPreviewButtons && (
                   <>
-                    {/* <button onClick={handleDownloadResumePDF}>Download Resume (PDF)</button> */}
-                    {/* <button onClick={handleDownloadResumeDocx}>Download Resume (.docx)</button> */}
-                    <button onClick={() => handleDownload("word")}>Download (.docx)</button>
-                    <button onClick={() => handleDownload("pdf")}>Download (PDF)</button>
+                    <button onClick={handleDownloadResumePDF}>Download Resume (PDF)</button>  
+                    <button onClick={handleDownloadResumeDocx}>Download Resume (.docx)</button>
                   </>
                 )}
-                
 
               </div>
             </Slide>
@@ -350,18 +261,18 @@ export function GetStarted() {
                   className="semicircle" 
                   style={{
                     borderColor: 
-                      parseFloat(resumeScore.replace('%', '')) < 50 ? 'red' : 
-                      parseFloat(resumeScore.replace('%', '')) < 75 ? 'yellow' : 
-                      'green'
+                      parseFloat(resumeScore.replace('%', '')) < 50 ? '#472d30' : 
+                      parseFloat(resumeScore.replace('%', '')) < 75 ? '#e36414' : 
+                      '#0f4c5c'
                   }}
                 >
                   <span 
                     className="score-label" 
                     style={{
                       color: 
-                        parseFloat(resumeScore.replace('%', '')) < 50 ? 'red' : 
-                        parseFloat(resumeScore.replace('%', '')) < 75 ? 'yellow' : 
-                        'green'
+                        parseFloat(resumeScore.replace('%', '')) < 50 ? '#472d30' : 
+                        parseFloat(resumeScore.replace('%', '')) < 75 ? '#e36414' : 
+                        '#0f4c5c'
                     }}
                   >
                     {parseFloat(resumeScore.replace('%', '')) < 50 ? 'Low' : 
