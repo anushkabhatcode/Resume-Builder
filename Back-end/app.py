@@ -5,8 +5,9 @@ import ssl
 from flask import send_from_directory
 
 app = Flask(__name__)
-CORS(app)
-
+# CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"} })
+                             
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
