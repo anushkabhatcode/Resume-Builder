@@ -51,17 +51,18 @@ genai.configure(api_key=api_key_google)
 
 model = genai.GenerativeModel('gemini-pro')
 
-def similarity_main(tailored_resume, job_description):
+def similarity_main(tailored_resume_path, job_description_path):
     """
     Use Gemini Pro to evaluate the relevance score between a tailored resume and job description.
-
     Args:
     - tailored_resume (str): Tailored resume content.
     - job_description (str): Job description content.
-
     Returns:
     - dict: A dictionary containing the 'score' (scaled to 0–100) and 'reason'.
     """
+
+    resume_text = read_file(tailored_resume_path)
+    job_description = read_file(job_description_path)
     prompt = f"""
 You are a recruitment expert evaluating how well a tailored resume aligns with a job description. Provide a realistic and concise evaluation based on the following criteria:
 1. Relevance of skills and experience: Do the candidate’s skills, accomplishments, and experience meet the job's core requirements?
@@ -73,7 +74,7 @@ Score: [Score between 0 and 1]
 Reason: [One or two sentences explaining the score]
 Here is the tailored resume:
 [Resume Start]
-{tailored_resume}
+{resume_text}
 [Resume End]
 And the job description below:
 [Job Description Start]
@@ -117,4 +118,3 @@ And the job description below:
     except Exception as e:
         print(f"Error in relevance checking: {e}")
         return None
-
