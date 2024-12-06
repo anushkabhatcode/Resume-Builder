@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/get-started.css';
 import { Slide } from "react-awesome-reveal";
+import { ResumePreview } from '../components/ResumePreview';
 
 export function GetStarted() {
   const [resumeScore, setResumeScore] = useState(null);
@@ -13,7 +14,10 @@ export function GetStarted() {
   const [showPreviewButtons, setShowPreviewButtons] = useState(false);
   const [isTailoring, setIsTailoring] = useState(false);
 
+  const [markdownContent, setMarkdownContent] = useState("");
+
   const base_url = "http://127.0.0.1:5000/api";
+  // const base_url = "https://resume-builder-api-iuk0.onrender.com/api";
 
   const handleJDSubmit = async (event) => {
     const file = event.target.files[0];
@@ -85,59 +89,130 @@ export function GetStarted() {
       setLoading(false);
     }
   };
-
-  const handlePreviewResumeClick = async () => {
-    setIsTailoring(true); // Show tailoring message
+  
+  
+  const handleGetResumePath1 = async () => {
+    setIsTailoring(true);
     try {
-      // Fetch DOCX
-      const docxResponse = await fetch(`${base_url}/downloadresume/docx`, {
-        method: 'POST',
+      const response = await fetch(`${base_url}/tailorresume`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-      if (!docxResponse.ok) throw new Error("Failed to fetch DOCX");
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      
+      // Display tailored resume content as markdown
+      setMarkdownContent(data.resume);
+  
+      // Fetch file paths
+      const docxFilePath = `${base_url}/downloads/${data.filepath}`;
+      const pdfFilePath = `${base_url}/downloads/${data.filepath.replace(".docx", ".pdf")}`;
+  
+      console.log("DOCX Download URL:", docxFilePath);
+      console.log("PDF Download URL:", pdfFilePath);
+  
+      // Fetch DOCX Blob
+      const docxResponse = await fetch(docxFilePath);
+      const contentType = docxResponse.headers.get("Content-Type");
+      if (!docxResponse.ok) throw new Error("Failed to fetch DOCX Blob");
+      if (contentType !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+        console.error("Invalid DOCX response");
+        return;
+      }
       const docxBlob = await docxResponse.blob();
       setDocxBlob(docxBlob);
-
-      // Fetch PDF
-      const pdfResponse = await fetch(`${base_url}/downloadresume/pdf`, {
-        method: 'POST',
-      });
-      if (!pdfResponse.ok) throw new Error("Failed to fetch PDF");
-      const pdfBlob = await pdfResponse.blob();
-      setPdfBlob(pdfBlob);
-
-      // Open preview in a new tab
-      const url = window.URL.createObjectURL(pdfBlob); // Using PDF for preview
-      window.open(url, "_blank");
-
-      setShowPreviewButtons(true); // Enable download buttons
+      console.log("DOCX Blob fetched successfully");
+  
+      // Fetch PDF Blob
+      // const pdfResponse = await fetch(pdfFilePath);
+      // if (!pdfResponse.ok) throw new Error("Failed to fetch PDF Blob");
+      // const pdfBlob = await pdfResponse.blob();      
+      // setPdfBlob(pdfBlob);      
+      // console.log("PDF Blob fetched successfully");
+  
+      setShowPreviewButtons(true);
     } catch (error) {
-      console.error("Error while previewing resume:", error);
-    } finally {
+      console.error("Error while fetching resume paths:", error);
+    }finally {
       setIsTailoring(false); // Hide tailoring message
     }
   };
+  
+  
+  // const handlePreviewResumeClick = async () => {
+  //   setIsTailoring(true); // Show tailoring message
+  //   try {
+  //     // Fetch DOCX
+  //     const docxResponse = await fetch(`${base_url}/downloadresume/docx`, {
+  //       method: 'POST',
+  //     });
+  //     if (!docxResponse.ok) throw new Error("Failed to fetch DOCX");
+  //     const docxBlob = await docxResponse.blob();
+  //     setDocxBlob(docxBlob);
+
+  //     // Fetch PDF
+  //     const pdfResponse = await fetch(`${base_url}/downloadresume/pdf`, {
+  //       method: 'POST',
+  //     });
+  //     if (!pdfResponse.ok) throw new Error("Failed to fetch PDF");
+  //     const pdfBlob = await pdfResponse.blob();
+  //     setPdfBlob(pdfBlob);
+
+  //     // Open preview in a new tab
+  //     const url = window.URL.createObjectURL(pdfBlob); // Using PDF for preview
+  //     window.open(url, "_blank");
+
+  //     setShowPreviewButtons(true); // Enable download buttons
+  //   } catch (error) {
+  //     console.error("Error while previewing resume:", error);
+  //   } finally {
+  //     setIsTailoring(false); // Hide tailoring message
+  //   }
+  // };
+
+  useEffect(() => {
+    if (docxBlob && pdfBlob) {
+      console.log("DOCX and PDF blobs have been updated!");
+      console.log("DOCX Blob:", docxBlob);
+      console.log("PDF Blob:", pdfBlob);
+    }
+  }, [docxBlob, pdfBlob]); 
+
 
   const handleDownloadResumePDF = () => {
-    if (!pdfBlob) return;
+    if (!pdfBlob) {
+      console.error("PDF Blob is not available for download.");
+      return;
+    }
     const url = window.URL.createObjectURL(pdfBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.setAttribute('download', 'resume.pdf');
+    link.setAttribute("download", "resume.pdf");
     document.body.appendChild(link);
     link.click();
-    link.parentNode.removeChild(link);
+    // link.parentNode.removeChild(link);
+    document.body.removeChild(link);
   };
-
+  
   const handleDownloadResumeDocx = () => {
     if (!docxBlob) return;
+    
     const url = window.URL.createObjectURL(docxBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.setAttribute('download', 'resume.docx');
+    link.setAttribute("download", "resume.docx");
     document.body.appendChild(link);
     link.click();
-    link.parentNode.removeChild(link);
+    document.body.removeChild(link);
+    //   link.parentNode.removeChild(link);
   };
+
 
   return (
     <div className="get-started-container">
@@ -149,11 +224,11 @@ export function GetStarted() {
 
       <section className="get-started-banner">
         <div className="content">
-          <p>Upload your JD (PDF)</p>
+          <span>Upload your JD (PDF)</span>
           <div className="buttons-row">
             <input type="file" accept=".pdf" onChange={handleJDSubmit} />
           </div>
-          <p>Upload your resume (PDF)</p>
+          <span>Upload your resume (PDF)</span>
           <div className="buttons-row">
             <input type="file" accept=".pdf" onChange={handleFileUpload} />
           </div>
@@ -162,13 +237,16 @@ export function GetStarted() {
             <Slide direction="up" triggerOnce={true}>
               <div className="buttons-row">
                 <button onClick={handleGetResumeScoreClick}>Get Resume Score</button>
-                <button onClick={handlePreviewResumeClick}>Preview Resume</button>
+                {/* <button onClick={handlePreviewResumeClick}>Preview Resume</button> */}
+                {/* <button onClick={handleTailorResumeClick}>Preview Resume</button> */}
+                <button onClick={handleGetResumePath1}>Tailor Resume</button>
                 {showPreviewButtons && (
                   <>
-                    <button onClick={handleDownloadResumePDF}>Download Resume (PDF)</button>
+                    <button onClick={handleDownloadResumePDF}>Download Resume (PDF)</button>  
                     <button onClick={handleDownloadResumeDocx}>Download Resume (.docx)</button>
                   </>
                 )}
+
               </div>
             </Slide>
           )}
@@ -183,18 +261,18 @@ export function GetStarted() {
                   className="semicircle" 
                   style={{
                     borderColor: 
-                      parseFloat(resumeScore.replace('%', '')) < 50 ? 'red' : 
-                      parseFloat(resumeScore.replace('%', '')) < 75 ? 'yellow' : 
-                      'green'
+                      parseFloat(resumeScore.replace('%', '')) < 50 ? '#472d30' : 
+                      parseFloat(resumeScore.replace('%', '')) < 75 ? '#e36414' : 
+                      '#0f4c5c'
                   }}
                 >
                   <span 
                     className="score-label" 
                     style={{
                       color: 
-                        parseFloat(resumeScore.replace('%', '')) < 50 ? 'red' : 
-                        parseFloat(resumeScore.replace('%', '')) < 75 ? 'yellow' : 
-                        'green'
+                        parseFloat(resumeScore.replace('%', '')) < 50 ? '#472d30' : 
+                        parseFloat(resumeScore.replace('%', '')) < 75 ? '#e36414' : 
+                        '#0f4c5c'
                     }}
                   >
                     {parseFloat(resumeScore.replace('%', '')) < 50 ? 'Low' : 
@@ -205,10 +283,20 @@ export function GetStarted() {
               </div>              
               )}
               {isTailoring && (
-                <div className="tailoring-message" style={{ marginTop: '10px', color: 'blue' }}>
+                <div className="tailoring-message" style={{ marginTop: '10px', color: '#FAF9F6' }}>
                   Your resume is getting tailored. Please wait...
                 </div>
               )}
+              
+              <div className="content">
+                
+              {markdownContent && (
+                  <Slide direction="up" triggerOnce={true}>
+                    <ResumePreview markdownContent={markdownContent} />
+                  </Slide>
+                )}
+
+          </div>
             </>
           )}
         </div>
