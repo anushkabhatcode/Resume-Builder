@@ -186,7 +186,7 @@ def convert_resume_to_word(markdown_text,output_file):
     print(f"Markdown converted and saved as {output_file}")
 
 #Entry function for the model
-def generate_gemini(current_resume,job_description , download_path ='', doctype='docx'):
+def generate_gemini(current_resume,job_description , download_path):
     # st.header('Resume Tailoring')
     # Load the resume and job description from Google Drive
     resume_text = extract_text(current_resume)
@@ -201,15 +201,20 @@ def generate_gemini(current_resume,job_description , download_path ='', doctype=
         # Save the tailored resume to a .docx file
     if tailored_resume:
         time = datetime.now().strftime('%Y%m%d_%H%M%S')
+        # Generate the docx file
         file_name = f"Tailored_Resume_{time}.docx"
         file_path = os.path.join(download_path , file_name)
         convert_resume_to_word(tailored_resume,file_path)
-        if(doctype == 'pdf'):
-            file_name = f"Tailored_Resume_{time}.pdf"
-            save_resume_to_pdf(file_path, download_path)
-            file_path = os.path.join(download_path , file_name)
+        
+        # Generate the pdf file
+        file_name = f"Tailored_Resume_{time}.pdf"
+        save_resume_to_pdf(file_path, download_path)
 
         # st.success(f"Download tailored resume")
         # st.success(f"Tailored resume saved to {file_path}")        
 
-    return tailored_resume, file_path
+    return tailored_resume, time
+
+def returnFile(file_name , filetype):
+    resume_path = f"Tailored_Resume_{file_name}.{filetype}"
+    return resume_path
