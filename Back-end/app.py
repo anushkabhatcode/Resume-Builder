@@ -111,7 +111,8 @@ def handle_similarity_score():
 def handle_new_resume_similarity_score():
     JD_file_path = app.config['JD_PATH']
     file_name = app.config["FILE_NAME"]
-    file_path = returnFile(file_name , filetype)
+    file_path = returnFile(file_name , "pdf")
+    download_path = app.config['DOWNLOAD_FOLDER']
     resume_file_path = os.path.join(download_path , file_path)
     response = similarity_main(resume_file_path,JD_file_path)
     score = response["score"]
