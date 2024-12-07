@@ -106,6 +106,37 @@ def handle_similarity_score():
     reason = response["reason"]
     return jsonify({"score" : score , "reason" : reason}) , 200
 
+#Tailored Resume Similarity Score 
+@app.route('/api/getnewscore', methods=['POST'])
+def handle_new_resume_similarity_score():
+    # Get the latest file in the 'downloads' folder
+    download_folder = app.config['DOWNLOAD_FOLDER']
+    files = os.listdir(download_folder)
+    if not files:
+        return jsonify({"error": "No files found in downloads folder"}), 400
+
+    # Sort files by creation time and pick the most recent one
+    files_with_dates = [
+        (f, os.path.getmtime(os.path.join(download_folder, f))) for f in files
+    ]
+    latest_file = max(files_with_dates, key=lambda x: x[1])[0]
+    
+    # Define paths for the resume and JD files
+    resume_file_path = os.path.join(download_folder, latest_file)
+    JD_file_path = app.config['JD_PATH']  # Assuming JD is uploaded as usual
+
+    # Check if the latest resume file exists
+    if not os.path.exists(resume_file_path):
+        return jsonify({"error": "Latest resume not found"}), 400
+
+    # Calculate similarity score using the latest resume
+    try:
+        score = process_files(JD_file_path, resume_file_path)
+        return jsonify({"score": score}), 200
+    except Exception as e:
+        return jsonify({"error": f"Error processing files: {str(e)}"}), 500
+
+
 @app.route('/api/downloadresume/<filetype>' , methods=['POST'])
 def download_resume(filetype):
     # resume_file_path = app.config['RESUME_PATH']

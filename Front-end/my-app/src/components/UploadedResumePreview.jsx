@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 
-export function ResumePreview({ markdownContent }) {
+export function UploadedResumePreview({ uploadedResumeContent }) {
   return (
-    // {markdownContent && ( 
     <div className="resume-preview">
-      <ReactMarkdown>{markdownContent}</ReactMarkdown>
+      <ReactMarkdown>{uploadedResumeContent}</ReactMarkdown>
     </div>
     
   );

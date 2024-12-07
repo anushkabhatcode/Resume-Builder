@@ -4,13 +4,14 @@
   background-size: cover;
   color: #ffffff;
   padding: 20px;
-  /* width: 100vw; */
-  width: 100%;
+  width: 100vw;
+  width: 100%; 
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  overflow-y: auto;
 }
 
 /* Header */
@@ -39,10 +40,10 @@
 .get-started-banner {
   background: #646464;
   width: 100%;
-  /* max-width: 600px; */
-  /* height: 80vh; */
+  max-width: 100%;
+  height: 80vh;
   min-height: fit-content;
-  /* overflow-y: auto; */
+  overflow-y: auto;
   overflow: hidden;
   margin: 100px auto 20px;
   padding: 20px;
@@ -60,11 +61,21 @@
   padding: 1em;
 }
 
+.upload-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1em;
+  gap: 25px;
+}
+
 /* Buttons Row - Side by Side Alignment */
 .buttons-row {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 25px;
   margin-top: 15px;
 }
 
@@ -137,6 +148,7 @@ input[type="file"] {
 /* Semicircle Container */
 .semicircle-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 20px;
@@ -146,6 +158,9 @@ input[type="file"] {
 .semicircle {
   width: 150px;
   height: 75px;
+  border-top-left-radius: 100px;
+  border-top-right-radius: 100px;
+  bottom: 0;
   background-color: transparent;
   border: 10px solid;
   border-bottom: none;
@@ -155,6 +170,7 @@ input[type="file"] {
   align-items: center;
   position: relative;
 }
+
 
 /* Score Label */
 .score-label {
@@ -179,6 +195,10 @@ input[type="file"] {
     padding: 10px;
     font-size: 12px;
   }
+  .uploaded-resume-preview {
+    padding: 10px;
+    font-size: 12px;
+  }
 
   .buttons-row {
     flex-direction: column;
@@ -188,22 +208,40 @@ input[type="file"] {
 
 
 .resume-preview {
+  flex: 1;
   border: 1px solid #ccc;
   padding: 20px;
   margin-top: 20px;
   font-family: Arial, sans-serif;
   background: #f9f9f9;
-  max-width: 800px;
+  max-width: 100%;
   color: #000000;
   overflow-wrap: break-word;
   /* overflow: hidden; */
-  max-height: none;  
+  /* max-height: none;   */
   text-align: justify;
-  margin-bottom: 60px;
-
+  /* margin-bottom: 60px; */
   font-size: 12px;
   line-height: 1.15;
+}
 
+.uploaded-resume-preview {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  max-width: 100%;
+  color: #000000;
+  overflow-wrap: break-word;
+  /* overflow: hidden; */
+  /* max-height: none;   */
+  text-align: justify;
+  /* margin-bottom: 60px; */
+  font-size: 12px;
+  line-height: 1.15;
+  white-space: pre-line;
 }
 
 .resume-preview ul {
@@ -212,6 +250,11 @@ input[type="file"] {
   margin: 10px 0;         
 }
 
+.uploaded-resume-preview ul {
+  list-style: none;        
+  padding-left: 0;         
+  margin: 10px 0;         
+}
 
 .resume-preview ul li::before {
   content: '• ';           
@@ -220,22 +263,80 @@ input[type="file"] {
   margin-right: 8px;       
 }
 
+.uploaded-resume-preview ul li::before {
+  content: '• ';           
+  color: #555;             
+  font-weight: bold;       
+  margin-right: 8px;       
+}
 
-.resume-preview h1, .resume-preview h2, .resume-preview h3 {
+
+.resume-preview h1, .resume-preview h2, .resume-preview h3, .resume-preview h4 {
   color: #333;             
   font-weight: bold;       
   margin-top: 20px;        
   text-transform: uppercase; 
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%; 
-  background: #646464; 
+.uploaded-resume-preview h1, .uploaded-resume-preview h2, .uploaded-resume-preview h3, .uploaded-resume-preview h4 {
+  color: #333;             
+  font-weight: bold;       
+  margin-top: 20px;        
+  text-transform: uppercase; 
 }
 
+.resume-preview h4 {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+.uploaded-resume-preview h4 {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
 
-.resume-preview h1, .resume-preview h2 {
+.resume-preview h1, .resume-preview h2, .resume-preview h4 {
   color: #1d3557; 
+}
+.uploaded-resume-preview h1, .uploaded-resume-preview h2, .uploaded-resume-preview h3 {
+  color: #1d3557; 
+}
+
+/* .display-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1em;
+} */
+
+/* Flex Container to display both resumes side-by-side */
+.resume-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 1500px;  /* Limit the width to avoid stretching */
+  padding: 0px;
+  background: #646464;
+}
+
+/* Score Reason Container */
+.score-reason-container {
+  margin-top: 10px;  /* Space between score meter and reason */
+  text-align: center;
+  font-size: 16px;
+}
+
+.score-reason {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  color: #ecbb09;
+  font-weight: bold;
 }
