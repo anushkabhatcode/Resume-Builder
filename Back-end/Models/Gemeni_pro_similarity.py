@@ -96,7 +96,7 @@ And the job description below:
         lines = content_text.split("\n")
         score = None
         reason = None
-        print(content_text)
+        
         for line in lines:
             if line.lower().startswith("score:"):
                 try:
