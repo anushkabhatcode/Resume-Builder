@@ -161,24 +161,27 @@ def convert_resume_to_word(markdown_text,output_file):
     lines = markdown_text.splitlines()
 
     for line in lines:
-        if line.startswith("## "):  # Main heading (Level 1)
-            paragraph = doc.add_heading(line[3:].strip(), level=1)
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        elif line.startswith("### "):  # Subheading (Level 2)
-            paragraph = doc.add_heading(line[4:].strip(), level=2)
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        elif line.startswith("- "):  # Bullet points
-            paragraph = doc.add_paragraph()
-            add_bold_and_normal_text(paragraph, line[2:].strip())
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        elif line.startswith("* "):  # Sub-bullet points or normal list items
-            paragraph = doc.add_paragraph(style="List Bullet")
-            add_bold_and_normal_text(paragraph, line[2:].strip())
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        elif line.strip():  # Normal text (ignores blank lines)
-            paragraph = doc.add_paragraph()
-            add_bold_and_normal_text(paragraph, line.strip())
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  if line.startswith("# "):  # Top-level heading (Highest level)
+                    paragraph = doc.add_heading(line[2:].strip(), level=0)  # Level 0 is the highest heading in Word
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY  
+                  elif line.startswith("## "):  # Main heading (Level 1)
+                    paragraph = doc.add_heading(line[3:].strip(), level=1)
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  elif line.startswith("### "):  # Subheading (Level 2)
+                    paragraph = doc.add_heading(line[4:].strip(), level=2)
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  elif line.startswith("- "):  # Bullet points
+                    paragraph = doc.add_paragraph(style="List Bullet")
+                    add_bold_and_normal_text(paragraph, line[2:].strip())
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  elif line.startswith("* "):  # Sub-bullet points or normal list items
+                    paragraph = doc.add_paragraph(style="List Bullet 2")
+                    add_bold_and_normal_text(paragraph, line[2:].strip())
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  elif line.strip():  # Normal text (ignores blank lines)
+                    paragraph = doc.add_paragraph()
+                    add_bold_and_normal_text(paragraph, line.strip())
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
 
     # Save the Word document
 
