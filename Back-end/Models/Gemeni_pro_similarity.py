@@ -33,15 +33,11 @@ def read_file(file_path):
             raise PackageNotFoundError(f"The file {file_path} is not a valid docx file. It may be corrupted or of a different format.")
 
 import os
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/content/drive/MyDrive/Resume/firm-capsule-436804-b5-5f553d9f1043.json"
-
-import os
 # from langchain.text_splitter import RecursiveCharacterTextSplitter
 # from langchain_community.vectorstores.faiss import FAISS
 
 from docx import Document
 import google.generativeai as genai
-from datetime import datetime
 import PyPDF2
 
 api_key_google = os.environ.get('GOOGLE_GEMINI_KEY')
@@ -67,15 +63,18 @@ def similarity_main(tailored_resume_path, job_description_path):
 You are a recruitment expert evaluating how well a tailored resume aligns with a job description. Provide a realistic and concise evaluation based on the following criteria:
 1. Relevance of skills and experience: Do the candidate’s skills, accomplishments, and experience meet the job's core requirements?
 2. Domain Match: Are the candidate's experiences and achievements relevant to the industry or role?
-3. Clarity and Conciseness: Is the resume well-structured and focused on the job requirements?
+3. Clarity and Conciseness: Is the resume focused on the job requirements?
 4. Highlight any gaps or mismatched qualifications realistically.
-Provide your response in this exact format:
+
+Provide your response in this exact format and make sure that score is a floating point number.
 Score: [Score between 0 and 1]
 Reason: [One or two sentences explaining the score]
+
 Here is the tailored resume:
 [Resume Start]
 {resume_text}
 [Resume End]
+
 And the job description below:
 [Job Description Start]
 {job_description}
@@ -84,28 +83,30 @@ And the job description below:
 
     try:
         # Get the response from Gemini Pro
-        response = model.generate_content(prompt)
+
+        response = model.generate_content(prompt,generation_config={"temperature": 0.2})
         candidates = response.candidates
         if not candidates or len(candidates) == 0:
             raise ValueError("No candidates found in the response.")
 
         # Extract content text
         content_text = candidates[0].content.parts[0].text
-        print(f"Response from Gemini Pro:\n{content_text}")  # Debugging
 
         # Extract score and reason with simple parsing
         lines = content_text.split("\n")
         score = None
         reason = None
-
+        print(content_text)
         for line in lines:
             if line.lower().startswith("score:"):
                 try:
-                    score = float(line.split(":", 1)[1].strip()) * 100  # Scale to 0–100
+                    line_cleaned = line.replace("**", "").strip()
+                    score = float(line_cleaned.split(":", 1)[1].strip())
                 except ValueError:
                     raise ValueError(f"Invalid score format: {line}")
             elif line.lower().startswith("reason:"):
-                reason = line.split(":", 1)[1].strip()
+
+                reason = line.replace("**", "").split(":", 1)[1].strip()
 
         # Ensure both score and reason are extracted
         if score is None:
