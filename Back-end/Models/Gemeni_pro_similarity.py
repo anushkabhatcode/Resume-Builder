@@ -84,7 +84,7 @@ And the job description below:
     try:
         # Get the response from Gemini Pro
 
-        response = model.generate_content(prompt,generation_config={"temperature": 0.2})
+        response = model.generate_content(prompt,generation_config={"temperature": 0.0})
         candidates = response.candidates
         if not candidates or len(candidates) == 0:
             raise ValueError("No candidates found in the response.")
@@ -101,7 +101,8 @@ And the job description below:
             if line.lower().startswith("score:"):
                 try:
                     line_cleaned = line.replace("**", "").strip()
-                    score = float(line_cleaned.split(":", 1)[1].strip())
+                    score = float(line_cleaned.split(":", 1)[1].strip()) * 100
+                    score = round(score, 2)
                 except ValueError:
                     raise ValueError(f"Invalid score format: {line}")
             elif line.lower().startswith("reason:"):
