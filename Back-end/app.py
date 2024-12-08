@@ -4,7 +4,7 @@ import os, sys
 import ssl
 from flask import send_from_directory
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='build')
 # CORS(app)
 CORS(app, resources={r"/*": {"origins": ["*"]} })
 # CORS(app, resources={r"/*": {
@@ -30,6 +30,15 @@ from resume_generation_gemini_pro import *
 from resume_similarity_score import *
 from Gemeni_pro_similarity import *
 
+# Serve React frontend
+@app.route('/')
+def serve_react():
+    return send_from_directory(app.static_folder, 'index.html')
+
+# Serve React static files (CSS, JS, images)
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
 
 
 # Function to handle the resume upload
