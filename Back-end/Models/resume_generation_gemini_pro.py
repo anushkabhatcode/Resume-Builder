@@ -129,7 +129,7 @@ Please generate a resume that:
 9. Only includes true information about the candidate.It is very important that no fake details are added.Do not add anything that candidate has not worked on or has expereince with.
 10.If profile or summary section is being is being included, give that section priority after candiadte's information.
 11.Try to keep the content to one page.
-12.If education is the strong suit of the candidate, give it a priority over experience and vice-versa.
+12.If education is the strongest asset of the candidate, give it a priority over experience and vice-versa.
 13.Provide the text in markdown format that clearly identifies the headings and subheadings.
 """
 
