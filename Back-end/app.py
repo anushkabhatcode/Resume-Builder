@@ -106,6 +106,21 @@ def handle_similarity_score():
     reason = response["reason"]
     return jsonify({"score" : score , "reason" : reason}) , 200
 
+#Tailored Resume Similarity Score 
+@app.route('/api/getnewscore', methods=['POST'])
+def handle_new_resume_similarity_score():
+    JD_file_path = app.config['JD_PATH']
+    file_name = app.config["FILE_NAME"]
+    file_path = returnFile(file_name , "pdf")
+    download_path = app.config['DOWNLOAD_FOLDER']
+    resume_file_path = os.path.join(download_path , file_path)
+    response = similarity_main(resume_file_path,JD_file_path)
+    score = response["score"]
+    reason = response["reason"]
+    return jsonify({"score" : score , "reason" : reason}) , 200
+    
+
+
 @app.route('/api/downloadresume/<filetype>' , methods=['POST'])
 def download_resume(filetype):
     # resume_file_path = app.config['RESUME_PATH']
