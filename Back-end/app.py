@@ -136,7 +136,7 @@ def download_resume(filetype):
     download_path = app.config['DOWNLOAD_FOLDER']
     # resume , file_path = generate_gemini(resume_file_path, JD_file_path , download_path , filetype)
     file_name = app.config["FILE_NAME"]
-    file_path = returnFile(file_name , filetype)
+    file_path = returnFile(file_name , docx)
     download_path = os.path.join(download_path , file_path)
     if(filetype == "pdf"):
         return send_file(download_path , mimetype='application/pdf')
