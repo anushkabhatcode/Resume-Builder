@@ -126,8 +126,11 @@ Please generate a resume that:
 6. Only includes publications if the job description is research based.
 7. Summarizes the skills and technical skills section into a brief profile.
 8. Does not include courses, certification, references, skills and a technical skills sections.
-9. Only includes true information about the candidate.
-10.Provide the text in markdown format that clearly identifies the headings and subheadings.
+9. Only includes true information about the candidate.It is very important that no fake details are added.Do not add anything that candidate has not worked on or has expereince with.
+10.If profile or summary section is being is being included, give that section priority after candiadte's information.
+11.Try to keep the content to one page.
+12.If education is the strongest asset of the candidate, give it a priority over experience and vice-versa.
+13.Provide the text in markdown format that clearly identifies the headings and subheadings.
 """
 
 
@@ -161,24 +164,27 @@ def convert_resume_to_word(markdown_text,output_file):
     lines = markdown_text.splitlines()
 
     for line in lines:
-        if line.startswith("## "):  # Main heading (Level 1)
-            paragraph = doc.add_heading(line[3:].strip(), level=1)
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        elif line.startswith("### "):  # Subheading (Level 2)
-            paragraph = doc.add_heading(line[4:].strip(), level=2)
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        elif line.startswith("- "):  # Bullet points
-            paragraph = doc.add_paragraph()
-            add_bold_and_normal_text(paragraph, line[2:].strip())
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        elif line.startswith("* "):  # Sub-bullet points or normal list items
-            paragraph = doc.add_paragraph(style="List Bullet")
-            add_bold_and_normal_text(paragraph, line[2:].strip())
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        elif line.strip():  # Normal text (ignores blank lines)
-            paragraph = doc.add_paragraph()
-            add_bold_and_normal_text(paragraph, line.strip())
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  if line.startswith("# "):  # Top-level heading (Highest level)
+                    paragraph = doc.add_heading(line[2:].strip(), level=0)  # Level 0 is the highest heading in Word
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY  
+                  elif line.startswith("## "):  # Main heading (Level 1)
+                    paragraph = doc.add_heading(line[3:].strip(), level=1)
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  elif line.startswith("### "):  # Subheading (Level 2)
+                    paragraph = doc.add_heading(line[4:].strip(), level=2)
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  elif line.startswith("- "):  # Bullet points
+                    paragraph = doc.add_paragraph(style="List Bullet")
+                    add_bold_and_normal_text(paragraph, line[2:].strip())
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  elif line.startswith("* "):  # Sub-bullet points or normal list items
+                    paragraph = doc.add_paragraph(style="List Bullet 2")
+                    add_bold_and_normal_text(paragraph, line[2:].strip())
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+                  elif line.strip():  # Normal text (ignores blank lines)
+                    paragraph = doc.add_paragraph()
+                    add_bold_and_normal_text(paragraph, line.strip())
+                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
 
     # Save the Word document
 
@@ -186,7 +192,7 @@ def convert_resume_to_word(markdown_text,output_file):
     print(f"Markdown converted and saved as {output_file}")
 
 #Entry function for the model
-def generate_gemini(current_resume,job_description , download_path ='', doctype='docx'):
+def generate_gemini(current_resume,job_description , download_path):
     # st.header('Resume Tailoring')
     # Load the resume and job description from Google Drive
     resume_text = extract_text(current_resume)
@@ -201,15 +207,20 @@ def generate_gemini(current_resume,job_description , download_path ='', doctype=
         # Save the tailored resume to a .docx file
     if tailored_resume:
         time = datetime.now().strftime('%Y%m%d_%H%M%S')
+        # Generate the docx file
         file_name = f"Tailored_Resume_{time}.docx"
         file_path = os.path.join(download_path , file_name)
         convert_resume_to_word(tailored_resume,file_path)
-        if(doctype == 'pdf'):
-            file_name = f"Tailored_Resume_{time}.pdf"
-            save_resume_to_pdf(file_path, download_path)
-            file_path = os.path.join(download_path , file_name)
+        
+        # Generate the pdf file
+        file_name = f"Tailored_Resume_{time}.pdf"
+        save_resume_to_pdf(file_path, download_path)
 
         # st.success(f"Download tailored resume")
         # st.success(f"Tailored resume saved to {file_path}")        
 
-    return tailored_resume, file_path
+    return tailored_resume, time
+
+def returnFile(file_name , filetype):
+    resume_path = f"Tailored_Resume_{file_name}.{filetype}"
+    return resume_path
