@@ -35,22 +35,26 @@ The Resume Builder project enables Purdue University Fort Wayne (PFW) Career Dev
    Download the customized resume and, if needed, make final manual adjustments before submitting it to prospective employers.
 
 ## Technology Stack
+
 - **Frontend:**  
-  - [React](https://reactjs.org/) for building a responsive and interactive user interface.
-  
+  [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)  
+  Used for building a responsive and interactive user interface.
+
 - **Backend & Server:**  
-  - [Flask](https://flask.palletsprojects.com/) for handling server-side logic, API endpoints, and communication between the frontend and the AI services.
+  [![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)  
+  Handles server-side logic, API endpoints, and communication between the frontend and AI services.
 
 - **AI Model Integration:**  
-  - [Google Generative AI](https://cloud.google.com/gen-ai) with Gemini Pro for content generation and resume tailoring.
+  [![Google Cloud](https://img.shields.io/badge/Google%20Generative%20AI-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://cloud.google.com/gen-ai)  
+  Integrates with Google Generative AI (Gemini Pro) for content generation and resume tailoring.
 
 - **File Parsing & Processing:**  
-  - `PyPDF2` for extracting text from PDFs.  
-  - `docx2txt` and `python-docx` for reading and manipulating `.docx` files.
+  - `PyPDF2` for extracting text from PDFs  
+  - `docx2txt` and `python-docx` for handling `.docx` files
 
 - **Text Processing & Conversion:**  
-  - Tokenization and text preprocessing using `tf.keras.preprocessing`.  
-  - Resume formatting and conversion to DOCX and PDF using `python-docx` and headless LibreOffice.
+  [![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/) for tokenization and text preprocessing  
+  `python-docx` and headless LibreOffice for DOCX and PDF conversion
 
 - **Comparison & Similarity:** Custom logic to measure alignment between the candidates resume and the job description.
   
