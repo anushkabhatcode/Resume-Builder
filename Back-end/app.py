@@ -119,7 +119,7 @@ def handle_similarity_score():
 def handle_new_resume_similarity_score():
     JD_file_path = app.config['JD_PATH']
     file_name = app.config["FILE_NAME"]
-    file_path = returnFile(file_name , "pdf")
+    file_path = returnFile(file_name , "docx")
     download_path = app.config['DOWNLOAD_FOLDER']
     resume_file_path = os.path.join(download_path , file_path)
     response = similarity_main(resume_file_path,JD_file_path)
@@ -136,7 +136,7 @@ def download_resume(filetype):
     download_path = app.config['DOWNLOAD_FOLDER']
     # resume , file_path = generate_gemini(resume_file_path, JD_file_path , download_path , filetype)
     file_name = app.config["FILE_NAME"]
-    file_path = returnFile(file_name , docx)
+    file_path = returnFile(file_name , "docx")
     download_path = os.path.join(download_path , file_path)
     if(filetype == "pdf"):
         return send_file(download_path , mimetype='application/pdf')
