@@ -138,8 +138,8 @@ def download_resume(filetype):
     file_name = app.config["FILE_NAME"]
     file_path = returnFile(file_name , "docx")
     download_path = os.path.join(download_path , file_path)
-    if(filetype == "pdf"):
-        return send_file(download_path , mimetype='application/pdf')
+    # if(filetype == "pdf"):
+    #     return send_file(download_path , mimetype='application/pdf')
     return send_file(download_path)
     
 
