@@ -60,8 +60,6 @@ The Resume Builder project enables Purdue University Fort Wayne (PFW) Career Dev
   
 ## Setup & Deployment
 
-## Setup & Deployment
-
 **Prerequisites:**  
 - [Node.js](https://nodejs.org/en/) installed on your machine for running the React frontend.
 - [Python 3.x](https://www.python.org/downloads/) installed for running the Flask backend.
@@ -70,25 +68,29 @@ The Resume Builder project enables Purdue University Fort Wayne (PFW) Career Dev
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/yourusername/resume-builder-gemini-pro.git
-cd resume-builder-gemini-pro
+cd resume-builder
+
 ```
 ### 2. Set Environment Variables
+```
 export GOOGLE_GEMINI_KEY="your_google_gemini_api_key"
-
+```
 ### 3. Frontend Setup (React)
-
-cd frontend/my-app
+```
+cd Front-end/my-app
 npm install    # Install frontend dependencies
 npm run build  # Optionally build for production, or skip and just run locally
 npm start      # Start the React development server
-
+```
 ### 4. Backend Setup (Flask)
-cd ../../backend   # Navigate back and into the backend folder
+```
+cd ../../Back-end   # Navigate back and into the backend folder
 pip install -r requirements.txt   # Install backend dependencies
-
+```
 ### 5. Run the Flask Server
+```
 flask run
-
+```
 ### 6. Accessing the Deployed Version
 A deployed version may be accessible at: http://34.132.65.232:3000/
 
